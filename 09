@@ -1,0 +1,84 @@
+----------------------------------
+--Create Tables
+----------------------------------
+create table tcall(
+                oid number primary key,
+                tipo number,
+                subtipo number,
+                data_criacao date
+);
+
+create table om_record(
+                oid number primary key,
+                tipo number,
+                subtipo number,
+                natureza number,
+                data_criacao date
+);
+
+create table om_record_natureza(
+                oid number primary key,
+                tipo number,
+                subtipo number,
+                natureza number
+);
+
+----------------------------------
+--Insert Values
+----------------------------------
+
+insert into om_record_natureza values (1, 1, 1, 2);
+insert into om_record_natureza values (2, 1, 2, 4);
+insert into om_record_natureza values (3, 2, 1, 6);
+
+
+----------------------------------
+--Procedure prc_insere_om_record  
+----------------------------------
+create or replace procedure prc_insere_om_record (pa_tipo in om_record.tipo%type, pa_subtipo om_record.subtipo%type )
+is
+
+   va_natureza om_record.natureza%type;
+
+BEGIN
+
+    begin
+        
+        select a.NATUREZA 
+        into va_natureza
+        from OM_RECORD_NATUREZA a
+        where a.tipo = pa_tipo
+        and a.SUBTIPO = pa_subtipo;
+        
+        exception
+            when others then
+                va_natureza := 0;
+    end;
+
+    begin
+        insert into om_record (oid, tipo, subtipo, natureza, data_criacao) 
+            values (seq_om_record.nextval, pa_tipo, pa_subtipo, va_natureza, sysdate);
+
+        exception
+        when others then
+            raise_application_error(-20001,'Erro ao inserir na tabela om_record');
+
+    end;
+
+
+end;
+
+----------------------------------
+--Trigger TRG_TCALL  
+----------------------------------
+CREATE TRIGGER TRG_TCALL
+AFTER INSERT ON tcall
+ FOR EACH ROW
+
+DECLARE
+
+BEGIN
+
+    prc_insere_om_record(:new.tipo, :new.subtipo);
+
+END;
