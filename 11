@@ -1,0 +1,60 @@
+------------------------
+--Create Table
+------------------------
+create table equipes(
+             oid number primary key,
+             nome varchar2(40),
+             nome_b1 varchar2(40),
+             nome_b2 varchar2(40),
+             nome_b3 varchar2(40),
+             status number
+);
+
+create sequence seq_equipes;                
+
+create table cabecalho_tarefa (
+             oid number primary key,
+             nome varchar2(40),
+             data_criacao date, 
+             area varchar2(40), 
+             equipe_responsavel number
+);
+
+create sequence seq_cabecalho_tarefa;
+
+create table log_processo(
+             oid number primary key,
+             data date,
+             codigo number,
+             descricao varchar2(40)
+);
+
+create sequence seq_log_processo;    
+
+------------------------
+--Insert Values
+------------------------
+
+insert into equipes values (
+            SEQ_EQUIPES.nextval,
+'ALPHA1',
+'MT_07019',
+'13TRF',
+'E08796',
+0);
+
+insert into equipes values (
+            SEQ_EQUIPES.nextval,
+'BETA2',
+'MT_11606',
+'13TRF',
+'E08115',
+1);
+
+insert into equipes values (
+            SEQ_EQUIPES.nextval,
+'BETA1',
+'MT_07901',
+'13TRF',
+'E09516',
+1);
