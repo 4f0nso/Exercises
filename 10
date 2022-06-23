@@ -1,0 +1,4 @@
+--Sabendo que o comando select será executado na mesma sessão que o resto do código, qual o resultado? */
+    --Resultado será 1
+--E se executado em outra sessão?
+    --Resultado será 0
