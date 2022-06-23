@@ -1,0 +1,24 @@
+---------------------------------
+--Select name distincts animals
+---------------------------------
+select name from dogs
+UNION
+select  name from cats;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
