@@ -1,0 +1,102 @@
+--------------------------
+--Especifications
+--------------------------
+CREATE OR REPLACE PACKAGE om_pkg_task
+is
+
+    PROCEDURE proc_insere_log (pa_codigo in log_processo.codigo%type, 
+                                  pa_descricao in log_processo.descricao%type) ;
+    
+    FUNCTION func_insere_cabecalho_tarefa (PA_NOME IN cabecalho_tarefa.NOME%type, 
+                                              PA_AREA in cabecalho_tarefa.area%type ) return number;
+
+END om_pkg_task;
+
+----------------------------
+--Procedure proc_insere_log
+----------------------------
+CREATE OR REPLACE PACKAGE body om_pkg_task
+is
+
+    PROCEDURE proc_insere_log (pa_codigo in log_processo.codigo%type, pa_descricao in log_processo.descricao%type) 
+    is
+    begin
+        
+        insert into log_processo values (seq_log_processo.nextval, sysdate, pa_codigo, pa_descricao);
+
+    exception
+        when others then
+            null;
+    end;
+
+    FUNCTION func_insere_cabecalho_tarefa (PA_NOME IN cabecalho_tarefa.NOME%type, 
+                                            PA_AREA in cabecalho_tarefa.area%type )
+    return number
+    is
+
+    vr_equipe_responsavel equipes.oid%type := 0;
+    vr_retorno number := 0;
+    vr_status_equipe equipes.status%type;
+    vr_msg varchar2(100) := 'registro inserido com sucesso';
+
+    BEGIN
+
+        begin
+            select e.oid, e.status
+            into va_equipe_responsavel, va_status_equipe
+            from equipes equ
+            where equ.nome_b1||'/'||equ.nome_b2||'/'||equ.nome_b3 = PA_AREA;
+
+            if vr_status_equipe = 0 THEN
+                vr_retorno := -2;
+                vr_msg := 'A equipe '||vr_equipe_responsavel||' não esta ativa';
+            end if;      
+            
+            exception
+                when others then
+                    vr_retorno := -1;
+                    vr_msg := 'não existe equipe para area selecionada';
+
+        end;  
+
+        begin
+            insert into CABECALHO_TAREFA values 
+                    (SEQ_CABECALHO_TAREFA.nextval, PA_NOME, sysdate, pa_area, vr_equipe_responsavel);
+
+            exception 
+                when others then        
+                    vr_retorno := 99;
+                    vr_msg := 'erro ao inserir na tabela de tarefas';
+        end;        
+        
+        proc_insere_log(vr_retorno, vr_msg);
+        
+        return vr_retorno;
+
+    END;
+
+  
+END om_pkg_task;
+
+---------------
+--Declaration
+---------------
+
+DECLARE
+    VR_RESULTADO NUMBER;
+    VR_NOME_TAREFA VARCHAR2(40) := 'TAREFA TESTE 1'
+    VR_AREA_EQUIPE VARCHAR2(40) := 'MT_07019/13TRF/E08796'
+
+BEGIN
+
+    VR_RESULTADO := ADMIN.OM_PKG_TASK.FUNC_INSERE_CABECALHO_TAREFA(VR_NOME_TAREFA, VR_AREA_EQUIPE);
+
+    IF VR_RESULTADO <> 0 THEN
+        DBMS_OUTPUT.PUT_LINE('FALHA NO PROCESSO');
+    ELSE
+       DBMS_OUTPUT.PUT_LINE('PROCESSO EXECUTADO COM SUCESSO');
+    END IF;        
+
+
+END;
+
