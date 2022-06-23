@@ -1,0 +1,53 @@
+------------------
+--Create Table
+------------------
+create table alunos
+(id number,
+nome varchar2(40),
+valor number
+);
+
+------------------
+--Insert Values
+------------------
+insert into alunos values(1,'Julia',81 );
+insert into alunos values(2,'Carol',68 );
+insert into alunos values(3,'Maria',99 );
+insert into alunos values(4,'Andreia',78 );
+insert into alunos values(5,'Jaqueline',63 );
+insert into alunos values(6,'Marcela',88 );
+
+------------------
+--Create Table
+------------------
+create table notas
+( nota number,
+valor_min number,
+valor_max number);
+
+------------------
+--Insert Values
+------------------
+insert into notas values(1,0,9);
+insert into notas values(2,10,19);
+insert into notas values(3,20,29);
+insert into notas values(4,30,39);
+insert into notas values(5,40,49);
+insert into notas values(6,50,59);
+insert into notas values(7,60,69);
+insert into notas values(8,70,79);
+insert into notas values(9,80,89);
+insert into notas values(10,90,100 ); 
+
+-----------------
+--Select Case
+-----------------
+select case
+WHEN n.nota < 8 then 'NULL'
+ELSE a.nome
+END  as "nome", n.nota, a.valor
+from alunos a, notas n
+where  a.valor between n.valor_min and n.valor_max
+order by (case when n.nota < 8 then a.valor end) asc,
+a.valor desc, 
+a.nome;
