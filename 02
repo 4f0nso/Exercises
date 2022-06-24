@@ -1,0 +1,26 @@
+
+public class Main
+{
+	public static void main(String[] args) {
+	    
+	for (int x = 1; x <= 100; x++) {
+	    
+	      String resultado = String.valueOf( x );
+	      
+	      if ( x % 3 == 0 ) {
+	          resultado = "Foo";
+	      }
+	      
+	      if ( x % 5 == 0 ) {
+	          resultado = "Baa";
+	      }
+	      
+	      if ( x % 5 == 0 && x % 3 == 0 ) {
+	          resultado = "FooBaa";
+	      }
+	      
+	      System.out.println( resultado );
+	      
+	   }
+	}	   
+}
